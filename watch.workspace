@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="watch" Database="" Version="10000">
+  <Project Name="watch" Path="watch/watch.project" Active="No"/>
+  <Project Name="aricle_sample" Path="aricle_sample/aricle_sample.project" Active="No"/>
+  <Project Name="Windows" Path="Windows/Windows.project" Active="No"/>
+  <Project Name="watchdirsw" Path="watchdirsw/watchdirsw.project" Active="Yes"/>
+  <Project Name="utf8" Path="utf8/utf8.project" Active="No"/>
+  <Project Name="show_cp" Path="show_cp/show_cp.project" Active="No"/>
+  <Project Name="locales_list" Path="locales_list/locales_list.project" Active="No"/>
+  <Project Name="encodings" Path="encodings/encodings.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="watch" ConfigName="Debug"/>
+      <Project Name="aricle_sample" ConfigName="Debug"/>
+      <Project Name="Windows" ConfigName="Debug"/>
+      <Project Name="watchdirsw" ConfigName="Debug"/>
+      <Project Name="utf8" ConfigName="Debug"/>
+      <Project Name="show_cp" ConfigName="Debug"/>
+      <Project Name="locales_list" ConfigName="Debug"/>
+      <Project Name="encodings" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="no">
+      <Environment/>
+      <Project Name="watch" ConfigName="Release"/>
+      <Project Name="aricle_sample" ConfigName="Release"/>
+      <Project Name="Windows" ConfigName="Release"/>
+      <Project Name="watchdirsw" ConfigName="Release"/>
+      <Project Name="utf8" ConfigName="Release"/>
+      <Project Name="show_cp" ConfigName="Release"/>
+      <Project Name="locales_list" ConfigName="Release"/>
+      <Project Name="encodings" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

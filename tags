@@ -1,0 +1,8 @@
+WINARGV_H	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^#define WINARGV_H$/;"	macro	line:2
+WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^class WinArgv$/;"	class	line:14
+argv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<std::string> argv;$/;"	member	line:17	class:WinArgv	access:public
+argv_cw	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<const wchar_t*> argv_cw; \/\/ unicode numbers$/;"	member	line:18	class:WinArgv	access:public
+argv_ca	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<const    char*> argv_ca;$/;"	member	line:19	class:WinArgv	access:public
+argc	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	int argc;$/;"	member	line:20	class:WinArgv	access:public
+WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	WinArgv();$/;"	prototype	line:22	class:WinArgv	access:public	signature:()
+~WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	~WinArgv() = default;$/;"	prototype	line:23	class:WinArgv	access:public	signature:()

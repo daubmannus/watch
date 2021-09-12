@@ -1,0 +1,3 @@
+-IC:\!Work\_SmartPrint\Rlab\watch\watchdirsw
+-target
+x86_64-w64-mingw32

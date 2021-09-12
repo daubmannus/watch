@@ -1,0 +1,15 @@
+std	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^namespace std { template<typename _Tp> class shared_ptr {$/;"	namespace	line:1
+shared_ptr	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^namespace std { template<typename _Tp> class shared_ptr { $/;"	class	line:1	namespace:std
+operator ->	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^    _Tp* operator->();$/;"	prototype	line:2	class:std::shared_ptr	access:private	signature:()	returns:_Tp 
+reset	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^    void reset( Y* ptr );$/;"	prototype	line:3	class:std::shared_ptr	access:private	signature:( Y* ptr )	returns:void 
+reset	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^    void reset( Y* ptr, Deleter d );$/;"	prototype	line:4	class:std::shared_ptr	access:private	signature:( Y* ptr, Deleter d )	returns:void 
+reset	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^    void reset( Y* ptr, Deleter d, Alloc alloc );$/;"	prototype	line:5	class:std::shared_ptr	access:private	signature:( Y* ptr, Deleter d, Alloc alloc )	returns:void 
+get	C:\Users\theo\AppData\Roaming\codelite\tmp\codelite_templates.hpp	/^    _T* get() const;$/;"	prototype	line:6	class:std::shared_ptr	access:private	signature:() const	returns:_T 
+WINARGV_H	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^#define WINARGV_H$/;"	macro	line:2
+WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^class WinArgv$/;"	class	line:14
+argv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<std::string> argv;$/;"	member	line:17	class:WinArgv	access:public
+argv_cw	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<const wchar_t*> argv_cw; \/\/ unicode numbers$/;"	member	line:18	class:WinArgv	access:public
+argv_ca	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	std::vector<const    char*> argv_ca;$/;"	member	line:19	class:WinArgv	access:public
+argc	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	int argc;$/;"	member	line:20	class:WinArgv	access:public
+WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	WinArgv();$/;"	prototype	line:22	class:WinArgv	access:public	signature:()
+~WinArgv	C:\!Work\_SmartPrint\Rlab\watch\encodings\WinArgv.h	/^	~WinArgv() = default;$/;"	prototype	line:23	class:WinArgv	access:public	signature:()
