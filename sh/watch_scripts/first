@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+
+
+echo "hey"
+pwd
+echo "1: $1"
+for fn in "$@"; do
+	echo "  new file ($fn)"
+done
+warn "foo"
+echo "bye"

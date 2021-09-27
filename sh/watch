@@ -1,0 +1,131 @@
+#!/bin/bash
+
+####################################################
+# second version
+#
+# depends on watchdirsw.exe
+# and
+# _global.sh with global functions
+####################################################
+
+trap ctrl_c SIGINT;
+
+WATCH_BIN='watchdirsw.exe'
+LST_FN='.wlst'
+
+declare -A DIRS=(\
+	[first]='./test/dir 1st' \
+	[second]='./test/dir2nd' \
+	# [third]='./test/dir3rd' \
+)
+SCRIPTS_PATH='watch_scripts'
+export SCRIPTS_PATH=$(readlink -e "$SCRIPTS_PATH")
+
+source "$SCRIPTS_PATH/_global.sh"
+
+function cleanup {
+	for dir in "${DIRS[@]}"; do
+		cd "$dir"
+		rm -f "$LST_FN" "$LST_FN".bkp
+		cd - 1>/dev/null
+	done
+}
+
+function ctrl_c {
+	cleanup
+	echo "STOPPED BY USER (^C)" 1>&2
+	exit $?;
+}
+
+##########################################
+files_in_dir() {
+	ls -p | grep -v /
+}
+
+mklst() { 
+	# NB: for current dir
+	
+	# echo mklst
+	# pwd
+	
+	[ -f "$LST_FN" ] \
+		&& mv "$LST_FN" "$LST_FN".bkp
+	
+	printf '' >"$LST_FN"
+	[ -f "$LST_FN".bkp ] \
+		|| cp "$LST_FN" "$LST_FN".bkp
+
+	while IFS= read -r filename; do
+		stat --format="%n/%s/%Y" "$filename" >>"$LST_FN"
+	done < <(files_in_dir)
+	
+}
+
+script_name() { 
+	# get key by value
+	for key in ${!DIRS[@]}; do
+		[[ "$1" == "${DIRS[$key]}" ]] \
+			&& echo "$key"
+	done
+}
+
+process_new_file() {
+	# echo "new file ($1)"
+	"$SCRIPTS_PATH/$(script_name "$changed_dir")" "$1"
+}
+
+process_dir() { 
+# NB: run it only in subshell!
+	
+	[ -z "$1" ] && throw "no dir specified to process"
+	cd "$1"
+	
+	# update .lst
+	mklst
+	
+	while IFS= read -r diff_line; do
+		# echo "$diff_line"
+		[[ "$diff_line" =~ ^'> ' ]] \
+			&& diff_line="${diff_line#> }" && process_new_file "${diff_line%%/*}"
+	done < <(diff "$LST_FN".bkp "$LST_FN" 2>/dev/null)
+}
+
+
+##########################################
+# MAIN
+
+#### init dirs
+
+echo "initializing:"
+for key in ${!DIRS[@]}; do
+	echo "[$key] -> ${DIRS[$key]}"
+	[ -d "${DIRS[$key]}" ] \
+		|| throw 1 "dir doesn't exist (${DIRS[$key]})"
+		
+	[ -s "$SCRIPTS_PATH/$key" ] \
+		|| throw 2 "script doesn't exist ($SCRIPTS_PATH/$key)"
+	
+	rm -f "${DIRS[$key]}/.lst" "${DIRS[$key]}/.lst.bkp"
+	mklst "${DIRS[$key]}"
+done
+
+#### main loop (^c to exit)
+echo "watching... (press ^C for exit)"
+while true; do
+
+	#### run binary, wait
+	changed_dir=$("$WATCH_BIN" "${DIRS[@]}")
+	
+	echo "changed dir ($changed_dir)"
+	( process_dir "$changed_dir" )
+	
+	# echo 'second loop'
+	
+	# second loop for all the dirs, 
+	# to ensure there is no other changes
+	for dir in "${DIRS[@]}"; do
+		( process_dir "$dir" )
+	done
+	
+	# echo 'next'
+done
