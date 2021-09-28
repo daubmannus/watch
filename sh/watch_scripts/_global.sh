@@ -2,10 +2,12 @@
 
 DIRS_ROOT='./test'
 
+WATCH_BIN='watchdirsw.exe'
+
 LOG_FILENAME='log/watch.log'
 MD5_FILENAME='log/imp.md5'
 
-#LOG_REPEAT=1
+LOG_REPEAT='42'
 #__NO_LOG=1
 
 declare -A DIRS=(\
@@ -33,7 +35,7 @@ throw() {
 	[ -z "$1" ] && MSG='unknown' && ERR=254
 	[ -z "$2" ] && MSG="$1" && ERR=100
 	log "======= ERROR $ERR: $MSG ======="
-	[ -v $LOG_REPEAT ] || echo -e "error ($ERR): $MSG" 1>&2
+	[ -v $LOG_REPEAT ] && echo -e "error ($ERR): $MSG" 1>&2
 	exit $ERR
 }
 
@@ -47,7 +49,7 @@ date_str() {
 
 log() { 
 	msg="$(date_str) - $@"
-	[ -v $LOG_REPEAT ] || echo $msg
+	[ -v $LOG_REPEAT ] && echo $msg
 	[ -v $__NO_LOG ] || return
 	[ -z $LOG_FILENAME ] \
 		&& __NO_LOG=1 throw 101 "no log file"

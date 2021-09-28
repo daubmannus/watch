@@ -9,7 +9,6 @@
 ####################################################
 
 
-WATCH_BIN='watchdirsw.exe'
 LST_FN='.wlst'
 
 SCRIPTS_PATH='watch_scripts'
@@ -27,7 +26,7 @@ source "$SCRIPTS_PATH/_global.sh"
 
 ctrl_c() { 
 	log "======= STOPPED BY USER (^C) ======="
-	[ -v $LOG_REPEAT ] || echo "STOPPED BY USER (^C)" 1>&2
+	[ -v $LOG_REPEAT ] && echo "STOPPED BY USER (^C)" 1>&2
 	exit 0
 }
 
@@ -41,7 +40,7 @@ files_in_dir() {
 mklst() { 
 	# NB: for current dir
 	
-	# echo mklst
+	# printf "mklst "
 	# pwd
 	
 	[ -f "$LST_FN" ] \
@@ -98,38 +97,29 @@ process_dir() {
 # MAIN
 
 #### init dirs
-
 echo "initializing:"
 for key in ${!DIRS[@]}; do
 	echo "[$key] -> ${DIRS[$key]}"
 	[ -d "${DIRS[$key]}" ] \
 		|| throw 1 "dir doesn't exist (${DIRS[$key]})"
-		
 	[ -s "$SCRIPTS_PATH/$key" ] \
 		|| throw 2 "script doesn't exist ($SCRIPTS_PATH/$key)"
-	
-	rm -f "${DIRS[$key]}/.lst" "${DIRS[$key]}/.lst.bkp"
-	mklst "${DIRS[$key]}"
 done
 
 #### main loop (^c to exit)
 log "======= WATCH SCRIPT STARTED ======="
-echo "watching... (press ^C for exit)"
 while true; do
+	# loop for all the dirs, 
+	# to process changed while was in idle
+	for dir in "${DIRS[@]}"; do
+		( process_dir "$dir" )
+	done
 
+	echo "watching... (press ^C for exit)"
 	#### run binary, wait
 	changed_dir=$("$WATCH_BIN" "${DIRS[@]}")
 	
 	log "$(basename $WATCH_BIN): [$changed_dir]"
 	( process_dir "$changed_dir" )
 	
-	# echo 'second loop'
-	
-	# second loop for all the dirs, 
-	# to ensure there is no other changes
-	for dir in "${DIRS[@]}"; do
-		( process_dir "$dir" )
-	done
-	
-	[ ! -v $LOG_REPEAT ] && echo "watching... (press ^C for exit)"
 done
