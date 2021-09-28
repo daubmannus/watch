@@ -8,37 +8,33 @@
 # _global.sh with global functions
 ####################################################
 
-trap ctrl_c SIGINT;
 
 WATCH_BIN='watchdirsw.exe'
 LST_FN='.wlst'
 
-declare -A DIRS=(\
-	[first]='./test/dir 1st' \
-	[second]='./test/dir2nd' \
-	# [third]='./test/dir3rd' \
-)
 SCRIPTS_PATH='watch_scripts'
-export SCRIPTS_PATH=$(readlink -e "$SCRIPTS_PATH")
+SCRIPTS_PATH=$(readlink -e "$SCRIPTS_PATH")
 
 source "$SCRIPTS_PATH/_global.sh"
 
-function cleanup {
-	for dir in "${DIRS[@]}"; do
-		cd "$dir"
-		rm -f "$LST_FN" "$LST_FN".bkp
-		cd - 1>/dev/null
-	done
+# cleanup() { 
+	# for dir in "${DIRS[@]}"; do
+		# cd "$dir"
+		# rm -f "$LST_FN" "$LST_FN".bkp
+		# cd - 1>/dev/null
+	# done
+# }
+
+ctrl_c() { 
+	log "======= STOPPED BY USER (^C) ======="
+	[ -v $LOG_REPEAT ] || echo "STOPPED BY USER (^C)" 1>&2
+	exit 0
 }
 
-function ctrl_c {
-	cleanup
-	echo "STOPPED BY USER (^C)" 1>&2
-	exit $?;
-}
+trap ctrl_c SIGINT
 
 ##########################################
-files_in_dir() {
+files_in_dir() { 
 	ls -p | grep -v /
 }
 
@@ -69,9 +65,11 @@ script_name() {
 	done
 }
 
-process_new_file() {
-	# echo "new file ($1)"
-	"$SCRIPTS_PATH/$(script_name "$changed_dir")" "$1"
+process_new_file() { 
+	script=$(script_name "$changed_dir")
+	log "new ($1) -> [$script]"
+	"$SCRIPTS_PATH/$script" "$1"
+	# "$SCRIPTS_PATH/$(script_name "$changed_dir")" "$1"
 }
 
 process_dir() { 
@@ -83,11 +81,16 @@ process_dir() {
 	# update .lst
 	mklst
 	
+	diffs=$(diff "$LST_FN".bkp "$LST_FN" 2>/dev/null)
+	
+	[ -z "$diffs" ] && return
+	log ".lst changed [$1]"
+	
 	while IFS= read -r diff_line; do
 		# echo "$diff_line"
 		[[ "$diff_line" =~ ^'> ' ]] \
 			&& diff_line="${diff_line#> }" && process_new_file "${diff_line%%/*}"
-	done < <(diff "$LST_FN".bkp "$LST_FN" 2>/dev/null)
+	done < <(printf '%s\n' "$diffs")
 }
 
 
@@ -110,13 +113,14 @@ for key in ${!DIRS[@]}; do
 done
 
 #### main loop (^c to exit)
+log "======= WATCH SCRIPT STARTED ======="
 echo "watching... (press ^C for exit)"
 while true; do
 
 	#### run binary, wait
 	changed_dir=$("$WATCH_BIN" "${DIRS[@]}")
 	
-	echo "changed dir ($changed_dir)"
+	log "$(basename $WATCH_BIN): [$changed_dir]"
 	( process_dir "$changed_dir" )
 	
 	# echo 'second loop'
@@ -127,5 +131,5 @@ while true; do
 		( process_dir "$dir" )
 	done
 	
-	# echo 'next'
+	[ ! -v $LOG_REPEAT ] && echo "watching... (press ^C for exit)"
 done
