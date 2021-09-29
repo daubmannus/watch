@@ -11,18 +11,11 @@
 
 LST_FN='.wlst'
 
-SCRIPTS_PATH='watch_scripts'
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPTS_PATH="$SCRIPT_DIR/watch_scripts"
 SCRIPTS_PATH=$(readlink -e "$SCRIPTS_PATH")
 
 source "$SCRIPTS_PATH/_global.sh"
-
-# cleanup() { 
-	# for dir in "${DIRS[@]}"; do
-		# cd "$dir"
-		# rm -f "$LST_FN" "$LST_FN".bkp
-		# cd - 1>/dev/null
-	# done
-# }
 
 ctrl_c() { 
 	log "======= STOPPED BY USER (^C) ======="
@@ -91,7 +84,6 @@ process_dir() {
 			&& diff_line="${diff_line#> }" && process_new_file "${diff_line%%/*}"
 	done < <(printf '%s\n' "$diffs")
 }
-
 
 ##########################################
 # MAIN

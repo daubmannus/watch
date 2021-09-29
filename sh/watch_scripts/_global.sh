@@ -7,13 +7,14 @@ WATCH_BIN='watchdirsw.exe'
 LOG_FILENAME='log/watch.log'
 MD5_FILENAME='log/imp.md5'
 
-LOG_REPEAT='42'
+LOG_REPEAT=1
 #__NO_LOG=1
 
 declare -A DIRS=(\
 	[first]="$DIRS_ROOT"/'dir 1st' \
 	[second]="$DIRS_ROOT"/'dir2nd' \
 )
+	# [report]="$DIRS_ROOT"/'report' \
 
 
 # 2DO: switch
@@ -49,7 +50,7 @@ date_str() {
 
 log() { 
 	msg="$(date_str) - $@"
-	[ -v $LOG_REPEAT ] && echo $msg
+	[ -v $LOG_REPEAT ] || echo $msg
 	[ -v $__NO_LOG ] || return
 	[ -z $LOG_FILENAME ] \
 		&& __NO_LOG=1 throw 101 "no log file"
