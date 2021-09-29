@@ -1,0 +1,16 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+for fn in "$@"; do
+	[[ "$fn" == *.xml ]] \
+		&& [ ! -s ../OUT/"$fn" ] \
+			&& mv "$fn" ../OUT/"$fn" \
+				&& log "[report] ($fn) >>> [OUT]" \
+				&& 'rlab_messages.exe' --no-yaml ../OUT/"$fn" 2>/dev/null \
+					&& log "[report] rlab_messages.exe --no-yaml (>../OUT/$fn)"
+done
+
+##############################
+exit 0

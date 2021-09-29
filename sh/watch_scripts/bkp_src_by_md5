@@ -1,0 +1,24 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+for fn in "$@"; do
+
+	if [[ "$fn" == *.prn.pdf || "$fn" == *.cut.pdf ]]; then
+
+		# if file exists and has the pair
+		# check if the job was not backed up yet
+		if [ -s "${__pdf::-8}.cut.pdf" ] \
+			&& [ -s "${__pdf::-8}.prn.pdf" ] \
+			&& [ ! -d "${__pdf::-8}.src" ]
+		then
+			bkp_src_by_md5.sh $__pdf \
+				&& log bkp_src_by_md5.sh $__pdf
+		fi
+		
+	fi
+done
+
+##############################
+exit 0

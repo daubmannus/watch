@@ -1,0 +1,28 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+for fn in "$@"; do
+
+#### *.pdf
+	if [[ "$fn" == *.pdf ]]; then
+		__pdf="$fn"
+		
+		# echo "$__pdf"
+		'/cygdrive/c/Program Files (x86)/Quite/Quite Hot Imposing 4/qi_applycommands.exe' \
+			-control 'c:/settings/templates/plotter_marks_660x330_template.prn.xml' \
+			-source "$__pdf" \
+			-target "../../../out/${__pdf::-4}".plot.pdf \
+			-bleed Use \
+				&& log \[imp/pre/_prn/out\] imp "$__pdf" for plotter \
+		&& mv "$__pdf" ../../../out \
+			&& log \[imp/pre/_prn/out\] mv "$__pdf" to imp/out
+			
+
+####
+	fi
+done
+	
+##############################
+exit 0

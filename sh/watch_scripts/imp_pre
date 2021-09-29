@@ -1,0 +1,35 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+for fn in "$@"; do
+
+#### *.cut.imp.pdf
+	if [[ "$fn" == *.cut.imp.pdf ]]; then
+		__cut_imp="$fn"
+		mv "$__cut_imp" _cut/in \
+			&& log \[imp/pre\] mv "$__cut_imp" _cut/in
+			
+#### *.prn.imp.pdf
+	elif [[ "$fn" == *.prn.imp.pdf ]]; then
+		__prn_imp="$fn"
+	
+		__yml_str_fn="${__prn_imp::-8}".yml
+		if [ -s "$__yml_str_fn" ]; then
+			
+			imp_yml2xml_infostring.pl "$__yml_str_fn" 2>>../log.txt \
+				&& log \[imp/pre\] imp_yml2xml_infostring.pl "$__yml_str_fn" \
+			&& mv "${__yml_str_fn::-4}".imp.xml _prn/in \
+			&& mv "$__prn_imp" _prn/in \
+			&& mv "$__yml_str_fn" ../done \
+				&& log \[imp/pre\] mv pdf\&xml to _prn/in, mv yml ../done
+				 
+		fi
+
+####
+	fi
+done
+	
+##############################
+exit 0

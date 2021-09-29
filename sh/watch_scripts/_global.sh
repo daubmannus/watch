@@ -1,25 +1,29 @@
 #!/bin/bash
 
-DIRS_ROOT='./test'
+DIRS_ROOT='P:/hot'
 
 WATCH_BIN='watchdirsw.exe'
 
-LOG_FILENAME='log/watch.log'
-MD5_FILENAME='log/imp.md5'
+LOG_FILENAME='C:/log/watch.log'
+MD5_FILENAME='C:/log/imp.md5'
 
-LOG_REPEAT=1
+# LOG_REPEAT=1
 #__NO_LOG=1
+# VERBOSE=1
+
+WAKE_KEY="__wake"
 
 declare -A DIRS=(\
-	[first]="$DIRS_ROOT"/'dir 1st' \
-	[second]="$DIRS_ROOT"/'dir2nd' \
+	["$WAKE_KEY"]="$DIRS_ROOT"
+	[report]="$DIRS_ROOT"/'report' \
+	[OUT]="$DIRS_ROOT"/'OUT' \
+	[imp_in]="$DIRS_ROOT"/'imp/in' \
+	[imp_pre]="$DIRS_ROOT"/'imp/pre' \
+	[imp_pre_prn_out]="$DIRS_ROOT"/'imp/pre/_prn/out' \
+	[imp_pre_cut_out]="$DIRS_ROOT"/'imp/pre/_cut/out' \
+	[bkp_src_by_md5]="$DIRS_ROOT"/'imp/done' \
 )
-	# [report]="$DIRS_ROOT"/'report' \
 
-
-# 2DO: switch
-# cleaning daily at 00:00
-# __clean_time='00'
 
 
 DIRS_ROOT=$(readlink -e "$DIRS_ROOT")
@@ -37,11 +41,15 @@ throw() {
 	[ -z "$2" ] && MSG="$1" && ERR=100
 	log "======= ERROR $ERR: $MSG ======="
 	[ -v $LOG_REPEAT ] && echo -e "error ($ERR): $MSG" 1>&2
-	exit $ERR
+	
+	# export EXIT_CODE=$ERR
+	kill 0
+	# exit $ERR
 }
 
 warn() { 
-	echo "WARNING: $1" 1>&2
+	log "======= WARNING: $1 ======="
+	[ -v $LOG_REPEAT ] && echo "WARNING: $1" 1>&2
 }
 
 date_str() { 

@@ -1,0 +1,47 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+for fn in "$@"; do
+	
+#### yml
+	if [[ "$fn" == *.yml ]]; then
+		__yml="$fn"
+		
+		imp_yml2xml_v3.3.pl $__yml 2>>../log.txt \
+			&& log [in] imp_yml2xml_v3.3.pl $__yml 2>>../log.txt \
+		\
+		&& __yml_basename="${__yml::-8}" \
+		&& \
+			if   [ $__yml == "$__yml_basename".cut.yml ]; then
+				mv "$__yml_basename".cut.yml ../done \
+					&& log [imp/in] mv "$__yml_basename".cut.yml ../done
+			elif [ $__yml == "$__yml_basename".prn.yml ]; then
+				mv "$__yml_basename".prn.yml ../pre \
+					&& log [imp/in] mv "$__yml_basename".prn.yml ../pre
+			fi
+			
+#### xml
+	elif [[ "$fn" == *.xml ]]; then
+		__xml="$fn"
+		
+		__name="${__xml::-4}"
+		# echo $__name
+		[ -s "$__name".pdf ] \
+		&& \
+			'/cygdrive/c/Program Files (x86)/Quite/Quite Hot Imposing 4/qi_applycommands.exe' \
+				-control "$__name".xml \
+				-source "$__name".pdf \
+				-target ../pre/"$__name".imp.pdf \
+				-bleed Use \
+			&& log \[qi_applycommands.exe for "$__name"\] \
+		&& mv "$__name".xml ../done \
+		&& mv "$__name".pdf ../done \
+			&& log \[done\] "$__name" '(.xml and .pdf\) -> done\'
+
+	fi
+done
+	
+##############################
+exit 0

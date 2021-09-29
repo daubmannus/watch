@@ -1,0 +1,75 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$SCRIPT_DIR/_global.sh"
+##############################
+
+process_separated() {
+	__pdf="$1"
+	
+	## make thumbnail from cut.pdf and prn.pdf
+	if [ ! -f "${__pdf::-8}".tn.jpg ] \
+		&& [ -s "${__pdf::-8}".prn.pdf ] \
+		&& [ -s "${__pdf::-8}".cut.pdf ] 
+	then
+		touch "${__pdf::-8}".tn.jpg \
+			&& tn_make.sh "${__pdf::-8}" &
+		log [OUT] 'tn_make.sh' "${__pdf::-8}" '&' 
+			
+		__md5__prn="$(md5sum ${__pdf::-8}.prn.pdf | perl -pe 's/^([0-9a-f]{32})\ \*/$1 /')"
+		__md5__cut="$(md5sum ${__pdf::-8}.cut.pdf | perl -pe 's/^([0-9a-f]{32})\ \*/$1 /')"
+		
+		log "$__md5__prn";
+		log "$__md5__cut";
+		
+		echo "$__md5__prn" >>"$MD5_FILENAME"
+		echo "$__md5__cut" >>"$MD5_FILENAME"
+			
+		# log "$(md5sum "${__pdf::-8}".prn.pdf)"
+		# log "$(md5sum "${__pdf::-8}".cut.pdf)"
+	fi
+	
+
+}
+
+######################
+## MAIN
+for fn in "$@"; do
+	
+	if [[ "$fn" == *.out.pdf ]]; then
+		__pdf="$fn"
+		
+	## for separation
+		[ ! -s ../ok/"${__pdf::-8}".pdf ] \
+		&& [ ! -s "${__pdf::-8}".prn.pdf ] \
+			&& cp "$__pdf" ../ok/"${__pdf::-8}".pdf \
+				&& log [OUT] cp "$__pdf" ../ok/"${__pdf::-8}".pdf \
+		
+		mv "$__pdf" "${__pdf::-8}".pdf \
+			&& log [OUT] mv "$__pdf" "${__pdf::-8}".pdf
+
+			
+	## make trimbox .yml 
+		[ ! -s "${__pdf::-8}".yml ] \
+		&& [ ! -s ../original/"${__pdf::-8}".yml ] \
+			&& 'trimbox.pl' "${__pdf::-8}".pdf >>'c:\log\trimsize.log' 2>&1 \
+				&& log [OUT] 'trimbox.pl' "${__pdf::-8}".pdf >>'c:\log\trimsize.log' 2>&1 
+				
+	## make .msgs.xml
+	elif [[ "$fn" == *.xml && "$fn" != *.msgs.xml ]]; then
+		
+		[ ! -s "${fn::-4}".yml ] \
+			&& warn "NO TRIMSIZE FILE (${fn::-4}.yml)!" \
+			&& exit 201
+			
+		'rlab_messages.exe' "$fn" 2>/dev/null \
+					&& log "[OUT] rlab_messages.exe >(${fn::-4}.msgs.xml)"
+		
+	
+	elif [[ "$fn" == *.prn.pdf || "$fn" == *.cut.pdf ]]; then
+		process_separated "$fn"
+			
+	fi
+done
+	
+##############################
+exit 0

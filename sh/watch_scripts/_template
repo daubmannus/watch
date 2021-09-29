@@ -1,9 +1,16 @@
 #!/bin/bash
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 source "$SCRIPT_DIR/_global.sh"
+##############################
 
 echo in dir "'"$(pwd)"'"
 for fn in "$@"; do
 	echo added file "'"$fn"'"
+	
+	# if [[ "$fn" == *.pdf ]]; then
+	# 	__pdf="$fn"
+	# fi
 done
+
+##############################
+exit 0
